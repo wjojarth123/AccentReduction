@@ -44,12 +44,12 @@ dictturtle.goto(-300  ,-300)
 word.ht()
 awnser.resizemode("user")
 awnser.shapesize(3, 3, 5)
-authenticator = IAMAuthenticator('jdDymmXRUxB1zUTS5rTB8fH18uPo2IzCNMR0C3Sf-dvu')
+authenticator = IAMAuthenticator('{apikey}')
 speech_to_text = SpeechToTextV1(
     authenticator=authenticator
 )
 
-speech_to_text.set_service_url('https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/51627f25-e544-4602-9a54-00cfa7e97ad3')
+speech_to_text.set_service_url('{url}')
 
 def getResult():
     with open(join(dirname(__file__), './.', 'output.wav'),
