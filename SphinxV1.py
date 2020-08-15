@@ -15,7 +15,7 @@ dictionary=PyDictionary()
 r = sr.Recognizer()
 wordsComplete=0
 inccorectWords=[]
-wordlist=['wage','wait','wake','walk','wall','wallet','want','ward','warehouse','warfare','warm','warmer','warn','warrant','warranty','wary','wash','waste','watch','watchdog','water','waterproof','waters','wave','weak','weaken','weaker','weakest','weakness','wealth','wealthiest','wealthy','weapon','wear','wearable','wearables','weather','website','websites','week','weekend','weekly','weigh','weight','weird','welcome','welcomed','welcoming','welfare','well','wells','west','western','whale','whales','what','whatever','wheat','wheel','wheelchair','when','whenever','where','whereabouts','whereas','wherever','whether','which','while','white','whoever','whole','wholesale','wholly','whom','whopping','whose','wide','widely','wider','widespread','widgets','widow','width','wife','wild','wildfire','wildlife','wildly','will','willingness','wind','winding','window','wine','wing','winner','winter','wipe','wire','wired','wireless','wirelessly','wisdom','wise','wish','with','withdraw','withdrawal','within','without','withstand','witness','woke','woman','wonder','wonderful','wood','wooden','word','work','worker','workflow','workflows','workforce','workload','workout','workplace','workstation','world','worldwide','worm','worry','worse','worst','worth','worthwhile','worthy','would','wound','wounded','wounding','wrap','wreck','wreckage','wrist','write','writer','wrong','vacant ','vacation ','vaccination ','vaccine ','vacuum ','vague ','vaguely ','vain ','valid ','validate ','validation ','validity ','valley ','valuable ','valuation ','value ','valued ','valuing ','valve ','vampire ','vanilla ','vantage ','vapor ','variable ','variables ','variant ','variation ','variety ','various ','vast ','vastly ','vault ','vector ','vegan ','vegetable ','vegetation ','vehemently ','vehicle ','vein ','velocity ','vending ','vendor ','venerable ','venom ','vent ','ventilation ','venture ','ventured ','venturing ','venue ','verbal ','verdict ','verge ','verifiable ','verification ','verify ','veritable ','versa ','versatile ','versatility ','version ','versus ','vertebrate ','vertical ','vertically ','verticals ','very ','vessel ','vest ','vested ','veteran ','veto ','vetoed ','viability ','viable ','vibrant ','vibration ','vice ','vicinity ','vicious ','victim ','victory ','video ','videogame ','videotaped ','view ','viewable ','viewed ','viewer ','viewfinder ','viewing ','viewpoint ','vigil ','vigilance ','vigilant ','vigilante ','vigorous ','vigorously ','villa ','village ','villagers ','vintage ','vinyl ','violate ','violation ','violence ','violent ','violently ','viral ','virtual ','virtually ','virtue ','virus ','visa ','visibility ','visible ','visibly ','vision ','visionary ','visit ','visitor ','visual ','visualize ','visually ','visuals ','vital ','vivid ','vocal ','vodka ','voice ','voicemail ','void ','volatile ','volatility ','volcanic ','volcano ','voltage ','volume ','voluntarily ','voluntary ','volunteer ','volunteered ','vortex ','vote ','voter ','vowed ','vowing ','voyage ']
+file=open("list.txt")
 chunk = 1024
 sample_format = pyaudio.paInt16
 channels = 1
@@ -46,16 +46,25 @@ def getResult():
         audio_text = r.listen(source)
 
     # recoginize_() method will throw a request error if the API is unreachable, hence using exception handling
-        try:
+        #try:
 
             # using google speech recognition
-            data = r.recognize_google(audio_text)
-            print('Converting audio transcripts into text ...')
-            print(data)
+        results=[]
+        results.append(r.recognize_google(audio_text).lower())
+        #results.append(r.recognize_sphinx(audio_text).lower())
+        #apikey results.append(r.recognize_wit(audio_text).lower())
+        #results.append(r.recognize_api(audio_text).lower())
+        #results.append(r.recognize_ibm(audio_text).lower())
+        #apikey results.append(r.recognize_bing(audio_text).lower())
+        id='aUqG6M26l4HhciRvcDINrQ=='
+        key='hRcltnYRVunwgoPykUriDTDstwHCI4vgBDr1Bx2fkMmJ2N5egNu6gwR0XY_BCdTLZX3fPYCdIao_gNiL3Rg-uA=='
+        results.append(r.recognize_houndify(audio_text,id,key).lower())
+        print('Converting audio transcripts into text ...')
+        print(results)
 
-        except:
-             print('Sorry.. run again...')
-    return data
+        #except:
+             #print('Sorry.. run again...')
+    return results
 
 
 def recordAudio():
@@ -108,7 +117,7 @@ def getRecording(text,speed):
 
 while True:
     wordsComplete+=1
-    currentword=wordlist[random.randrange(0,len(wordlist))]
+    currentword=file.readline(random.randrange(5,40))
     word.write(currentword, align="center",font=("Verdana", 30, "normal"))
     meaning=dictionary.meaning(currentword)
     meaningSplit=re.findall('.',str(meaning))
@@ -128,14 +137,15 @@ while True:
     recordAudio()
     result=getResult()
     #print('a',result,'b')
-    result=result.replace(" ", "")
+    print(result)
     currentword=currentword.replace(" ", "")
-    result.lower()
+    currentword=currentword.replace("\n", "")
+    print(result)
     #print('a',result,'b')
-    if currentword in result:
+    if any(currentword in s for s in result):
         print('correct')
         awnser.color('green')
-    if not currentword in result:
+    if not any(currentword in s for s in result):
         print('incorrect')
         awnser.color('red')
         #inccorectWords.append(currentword)
@@ -145,14 +155,11 @@ while True:
         result=getResult()
         result=result[0]
         #print('a',result,'b')
-        result=result.replace(" ", "")
-        currentword=currentword.replace(" ", "")
-        result.lower()
         #print('a',result,'b')
-        if currentword in result:
+        if any(currentword in s for s in result):
             print('correct')
             awnser.color('green')
-        if not currentword in result:
+        if not any(currentword in s for s in result):
             print('incorrect')
             awnser.color('red')
             inccorectWords.append(currentword)
