@@ -41,7 +41,7 @@ recording.goto(300  ,0)
 awnser.goto(300  ,-300)
 dictturtle.goto(-300  ,-300)
 word.ht()
-authenticator = IAMAuthenticator('{apikey}')
+authenticator = IAMAuthenticator('jdDymmXRUxB1zUTS5rTB8fH18uPo2IzCNMR0C3Sf-dvu')
 speech_to_text = SpeechToTextV1(
     authenticator=authenticator
 )
