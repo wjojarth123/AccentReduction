@@ -11,16 +11,25 @@ from gtts import gTTS
 import pyaudio
 import random
 from PyDictionary import PyDictionary
+wordlist=[]
+file=open("list.txt")
+a=file.read()
+print(a)
+wordlist=a.split('\n')
+# num_lines = sum(1 for line in file)
+# for line in range(0,num_lines):
+#     print(file.readline(5))
+#     wordlist.append(file.readline())
+print(wordlist)
 dictionary=PyDictionary()
 r = sr.Recognizer()
 wordsComplete=0
 inccorectWords=[]
-file=open("list.txt")
 chunk = 1024
 sample_format = pyaudio.paInt16
 channels = 1
 fs = 44100
-seconds = 3
+seconds = 5
 filename = "output.wav"
 p = pyaudio.PyAudio()
 
@@ -50,21 +59,22 @@ def getResult():
 
             # using google speech recognition
         results=[]
-        results.append(r.recognize_google(audio_text).lower())
-        #results.append(r.recognize_sphinx(audio_text).lower())
-        #apikey results.append(r.recognize_wit(audio_text).lower())
-        #results.append(r.recognize_api(audio_text).lower())
-        #results.append(r.recognize_ibm(audio_text).lower())
-        #apikey results.append(r.recognize_bing(audio_text).lower())
-        id='aUqG6M26l4HhciRvcDINrQ=='
-        key='hRcltnYRVunwgoPykUriDTDstwHCI4vgBDr1Bx2fkMmJ2N5egNu6gwR0XY_BCdTLZX3fPYCdIao_gNiL3Rg-uA=='
-        results.append(r.recognize_houndify(audio_text,id,key).lower())
-        print('Converting audio transcripts into text ...')
-        print(results)
+        try:
+            results.append(r.recognize_google(audio_text).lower())
+            #results.append(r.recognize_sphinx(audio_text).lower())
+            #apikey results.append(r.recognize_wit(audio_text).lower())
+            #results.append(r.recognize_api(audio_text).lower())
+            #results.append(r.recognize_ibm(audio_text).lower())
+            #apikey results.append(r.recognize_bing(audio_text).lower())
+            id='aUqG6M26l4HhciRvcDINrQ=='
+            key='hRcltnYRVunwgoPykUriDTDstwHCI4vgBDr1Bx2fkMmJ2N5egNu6gwR0XY_BCdTLZX3fPYCdIao_gNiL3Rg-uA=='
+            results.append(r.recognize_houndify(audio_text,id,key).lower())
+            print('Converting audio transcripts into text ...')
+            print(results)
 
-        #except:
-             #print('Sorry.. run again...')
-    return results
+        except:
+             print('Sorry.. run again...')
+        return results
 
 
 def recordAudio():
@@ -117,7 +127,9 @@ def getRecording(text,speed):
 
 while True:
     wordsComplete+=1
-    currentword=file.readline(random.randrange(5,40))
+    rand=random.randrange(5,40)
+    print(rand)
+    currentword=wordlist[rand]
     word.write(currentword, align="center",font=("Verdana", 30, "normal"))
     meaning=dictionary.meaning(currentword)
     meaningSplit=re.findall('.',str(meaning))
@@ -153,7 +165,6 @@ while True:
         playAudio()
         recordAudio()
         result=getResult()
-        result=result[0]
         #print('a',result,'b')
         #print('a',result,'b')
         if any(currentword in s for s in result):
