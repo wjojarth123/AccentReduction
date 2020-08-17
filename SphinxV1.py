@@ -1,30 +1,29 @@
 import turtle
-import time
-import json
 import re
-from os.path import join, dirname
 import speech_recognition as sr
 import wave
-import  vlc
+import vlc
 import time
 from gtts import gTTS
 import pyaudio
 import random
+from feedback import getFeedback
 from PyDictionary import PyDictionary
-wordlist=[]
-file=open("list.txt")
-a=file.read()
+
+
+file = open("list.txt")
+a = file.read()
 print(a)
-wordlist=a.split('\n')
+wordlist = a.split('\n')
 # num_lines = sum(1 for line in file)
 # for line in range(0,num_lines):
 #     print(file.readline(5))
 #     wordlist.append(file.readline())
 print(wordlist)
-dictionary=PyDictionary()
+dictionary = PyDictionary()
 r = sr.Recognizer()
-wordsComplete=0
-inccorectWords=[]
+wordsComplete = 0
+inccorrectWords = []
 chunk = 1024
 sample_format = pyaudio.paInt16
 channels = 1
@@ -33,22 +32,22 @@ seconds = 5
 filename = "output.wav"
 p = pyaudio.PyAudio()
 
-
-
-word=turtle.Turtle()
-recording=turtle.Turtle()
-awnser=turtle.Turtle()
-dictturtle=turtle.Turtle()
+word = turtle.Turtle()
+recording = turtle.Turtle()
+awnser = turtle.Turtle()
+dictturtle = turtle.Turtle()
 awnser.shape('circle')
 recording.shape('circle')
 recording.hideturtle()
 recording.penup()
 dictturtle.penup()
 awnser.penup()
-recording.goto(300  ,0)
-awnser.goto(300  ,-300)
-dictturtle.goto(-300  ,-300)
+recording.goto(300, 0)
+awnser.goto(300, -300)
+dictturtle.goto(-300, -300)
 word.ht()
+
+
 def getResult():
     with sr.AudioFile('output.wav') as source:
 
@@ -58,7 +57,7 @@ def getResult():
         #try:
 
             # using google speech recognition
-        results=[]
+        results = []
         try:
             results.append(r.recognize_google(audio_text).lower())
             #results.append(r.recognize_sphinx(audio_text).lower())
@@ -66,14 +65,14 @@ def getResult():
             #results.append(r.recognize_api(audio_text).lower())
             #results.append(r.recognize_ibm(audio_text).lower())
             #apikey results.append(r.recognize_bing(audio_text).lower())
-            id='aUqG6M26l4HhciRvcDINrQ=='
-            key='hRcltnYRVunwgoPykUriDTDstwHCI4vgBDr1Bx2fkMmJ2N5egNu6gwR0XY_BCdTLZX3fPYCdIao_gNiL3Rg-uA=='
-            results.append(r.recognize_houndify(audio_text,id,key).lower())
+            id = 'aUqG6M26l4HhciRvcDINrQ=='
+            key = 'hRcltnYRVunwgoPykUriDTDstwHCI4vgBDr1Bx2fkMmJ2N5egNu6gwR0XY_BCdTLZX3fPYCdIao_gNiL3Rg-uA=='
+            results.append(r.recognize_houndify(audio_text, id, key).lower())
             print('Converting audio transcripts into text ...')
             print(results)
 
         except:
-             print('Sorry.. run again...')
+            print('Sorry.. run again...')
         return results
 
 
@@ -89,16 +88,16 @@ def recordAudio():
     frames = []  # Initialize array to store frames
 
     # Store data in chunks for 3 seconds
-    a=0
+    a = 0
     for i in range(0, int(fs / chunk * seconds)):
         data = stream.read(chunk)
         frames.append(data)
-        a+=1
-        if a==20:recording.ht()
-        if a==40:
+        a += 1
+        if a == 20:
+            recording.ht()
+        if a == 40:
             recording.st()
-            a=0
-
+            a = 0
 
     # Stop and close the stream
     stream.stop_stream()
@@ -120,38 +119,41 @@ def playAudio():
     time.sleep(3)
     p.stop()
     print("complete")
-def getRecording(text,speed):
+
+
+def getRecording(text, speed):
     language = 'en'
-    speech = gTTS(text = text, lang = language, slow = speed)
+    speech = gTTS(text=text, lang=language, slow=speed)
     speech.save('text.mp3')
 
+
 while True:
-    wordsComplete+=1
-    rand=random.randrange(5,40)
+    wordsComplete += 1
+    rand = random.randrange(0, len(wordlist))
     print(rand)
-    currentword=wordlist[rand]
-    word.write(currentword, align="center",font=("Verdana", 30, "normal"))
-    meaning=dictionary.meaning(currentword)
-    meaningSplit=re.findall('.',str(meaning))
-    a=0
-    b=''
+    currentword = wordlist[rand]
+    word.write(currentword, align="center", font=("Verdana", 30, "normal"))
+    meaning = dictionary.meaning(currentword)
+    meaningSplit = re.findall('.', str(meaning))
+    a = 0
+    b = ''
     for char in meaningSplit:
-        a+=1
-        if a==50:
-            a=0
-            b+=char+'\n'
+        a += 1
+        if a == 50:
+            a = 0
+            b += char + '\n'
         else:
-            b+=char
-    dictturtle.write(b, align="left",font=("Verdana", 15, "normal"))
-    getRecording(currentword,False)
+            b += char
+    dictturtle.write(b, align="left", font=("Verdana", 15, "normal"))
+    getRecording(currentword, False)
     playAudio()
     print(currentword)
     recordAudio()
-    result=getResult()
+    result = getResult()
     #print('a',result,'b')
     print(result)
-    currentword=currentword.replace(" ", "")
-    currentword=currentword.replace("\n", "")
+    currentword = currentword.replace(" ", "")
+    currentword = currentword.replace("\n", "")
     print(result)
     #print('a',result,'b')
     if any(currentword in s for s in result):
@@ -161,10 +163,14 @@ while True:
         print('incorrect')
         awnser.color('red')
         #inccorectWords.append(currentword)
-        getRecording(currentword,True)
+        getRecording(currentword, True)
         playAudio()
         recordAudio()
-        result=getResult()
+        result = getResult()
+        word.clear()
+        word.write(getFeedback(currentword, result[0]), align="center", font=("Verdana", 30, "normal"))
+        time.sleep(3)
+        word.write(currentword, align="center", font=("Verdana", 30, "normal"))
         #print('a',result,'b')
         #print('a',result,'b')
         if any(currentword in s for s in result):
@@ -173,15 +179,6 @@ while True:
         if not any(currentword in s for s in result):
             print('incorrect')
             awnser.color('red')
-            inccorectWords.append(currentword)
+            inccorrectWords.append(currentword)
     word.clear()
     dictturtle.clear()
-
-
-
-
-# word.write("hello", align="center",font=("Verdana", 30, "normal"))
-# time.sleep(5)
-# word.clear()
-# word.write("bye", align="center",font=("Verdana", 30, "normal"))
-# time.sleep(5)
